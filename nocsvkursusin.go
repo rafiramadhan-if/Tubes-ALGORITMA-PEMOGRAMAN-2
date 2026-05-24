@@ -7,9 +7,7 @@ import (
 	"strings"
 )
 
-// ============================================================
 // KONSTANTA DAN TIPE DATA
-// ============================================================
 
 const nMax int = 1000
 
@@ -36,9 +34,7 @@ type DaftarPeserta [1000]Peserta
 type DaftarKursus [100]Kursus
 type DaftarBidang [20]BidangMinat
 
-// ============================================================
 // VARIABEL GLOBAL
-// ============================================================
 
 var (
 	daftarPeserta DaftarPeserta
@@ -50,9 +46,7 @@ var (
 	reader        = bufio.NewReader(os.Stdin)
 )
 
-// ============================================================
 // UTILITAS INPUT
-// ============================================================
 
 func bacaInput(prompt string) string {
 	fmt.Print(prompt)
@@ -61,16 +55,14 @@ func bacaInput(prompt string) string {
 }
 
 func cetakGaris() {
-	fmt.Println("============================================================")
+	fmt.Println("")
 }
 
 func cetakGarisTipis() {
-	fmt.Println("------------------------------------------------------------")
+	fmt.Println("")
 }
 
-// ============================================================
 // MANAJEMEN BIDANG MINAT
-// ============================================================
 
 func inisialisasiBidang() {
 	daftarBidang[0] = BidangMinat{"B001", "Web Development", 0}
@@ -128,17 +120,13 @@ func tampilkanKursusByBidang(bidang string) {
 	}
 }
 
-// ============================================================
 // GENERATE ID OTOMATIS
-// ============================================================
 
 func generateID() string {
 	return fmt.Sprintf("P%03d", nPeserta+1)
 }
 
-// ============================================================
 // FITUR A: TAMBAH PESERTA
-// ============================================================
 
 func tambahPeserta() {
 	cetakGaris()
@@ -181,9 +169,7 @@ func tambahPeserta() {
 	fmt.Printf("Bidang    : %s\n", bidang)
 }
 
-// ============================================================
 // FITUR A: UBAH PESERTA
-// ============================================================
 
 func ubahPeserta() {
 	cetakGaris()
@@ -243,9 +229,7 @@ func ubahPeserta() {
 	fmt.Println("Data peserta berhasil diubah!")
 }
 
-// ============================================================
 // FITUR A: HAPUS PESERTA
-// ============================================================
 
 func hapusPeserta() {
 	cetakGaris()
@@ -278,7 +262,6 @@ func hapusPeserta() {
 
 	if strings.ToLower(konfirmasi) == "y" {
 		updateJumlahBidang(daftarPeserta[idx].bidangMinat, -1)
-		// Geser elemen ke kiri
 		j := idx
 		for j < nPeserta-1 {
 			daftarPeserta[j] = daftarPeserta[j+1]
@@ -291,9 +274,7 @@ func hapusPeserta() {
 	}
 }
 
-// ============================================================
 // TAMPILKAN SEMUA PESERTA
-// ============================================================
 
 func tampilkanSemuaPeserta() {
 	if nPeserta == 0 {
@@ -314,9 +295,7 @@ func tampilkanSemuaPeserta() {
 	fmt.Printf("\nTotal peserta: %d\n", nPeserta)
 }
 
-// ============================================================
 // FITUR C: PENCARIAN - SEQUENTIAL SEARCH
-// ============================================================
 
 func sequentialSearchNama(nama string) {
 	fmt.Printf("\nHasil Sequential Search untuk nama '%s':\n", nama)
@@ -360,9 +339,7 @@ func sequentialSearchBidang(bidang string) {
 	}
 }
 
-// ============================================================
 // FITUR C: PENCARIAN - BINARY SEARCH (butuh data terurut by nama)
-// ============================================================
 
 func insertionSortByNama(arr *DaftarPeserta, n int) {
 	var temp Peserta
@@ -381,7 +358,6 @@ func insertionSortByNama(arr *DaftarPeserta, n int) {
 }
 
 func binarySearchNama(arr DaftarPeserta, n int, nama string) {
-	// Buat salinan array lalu urutkan
 	var arrSalin DaftarPeserta
 	i := 0
 	for i < n {
@@ -453,9 +429,7 @@ func menuCari() {
 	}
 }
 
-// ============================================================
 // FITUR D: PENGURUTAN - SELECTION SORT BY ID
-// ============================================================
 
 func selectionSortByID(arr *DaftarPeserta, n int) {
 	var i, j, idxMin int
@@ -477,9 +451,7 @@ func selectionSortByID(arr *DaftarPeserta, n int) {
 	}
 }
 
-// ============================================================
 // FITUR D: PENGURUTAN - INSERTION SORT BY NAMA
-// ============================================================
 
 func insertionSortNamaAsc(arr *DaftarPeserta, n int) {
 	var temp Peserta
@@ -528,9 +500,7 @@ func menuUrut() {
 	}
 }
 
-// ============================================================
 // FITUR E: STATISTIK
-// ============================================================
 
 func tampilkanStatistik() {
 	cetakGaris()
@@ -542,7 +512,6 @@ func tampilkanStatistik() {
 
 	i := 0
 	for i < nBidang {
-		// Bar chart sederhana
 		bar := ""
 		j := 0
 		for j < daftarBidang[i].jumlah {
@@ -560,9 +529,7 @@ func tampilkanStatistik() {
 	fmt.Printf("Total Peserta Aktif: %d\n", nPeserta)
 }
 
-// ============================================================
 // MENU MANAJEMEN PESERTA
-// ============================================================
 
 func menuManajemenPeserta() {
 	for {
@@ -598,9 +565,7 @@ func menuManajemenPeserta() {
 	}
 }
 
-// ============================================================
 // MAIN MENU
-// ============================================================
 
 func tampilkanHeader() {
 	cetakGaris()
