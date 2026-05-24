@@ -12,6 +12,7 @@ import (
 // ============================================================
 
 const nMax int = 1000
+const namaFile string = "peserta.csv"
 
 type Peserta struct {
 	id          string
@@ -66,6 +67,76 @@ func cetakGaris() {
 
 func cetakGarisTipis() {
 	fmt.Println("------------------------------------------------------------")
+}
+
+// ============================================================
+// SIMPAN & LOAD CSV
+// ============================================================
+
+func simpanCSV() {
+	file, err := os.Create(namaFile)
+	if err != nil {
+		fmt.Println("Gagal menyimpan data:", err)
+		return
+	}
+	defer file.Close()
+
+	// Tulis header
+	fmt.Fprintln(file, "ID,Nama,Tanggal,BidangMinat")
+
+	// Tulis setiap peserta
+	i := 0
+	for i < nPeserta {
+		fmt.Fprintf(file, "%s,%s,%s,%s\n",
+			daftarPeserta[i].id,
+			daftarPeserta[i].nama,
+			daftarPeserta[i].tanggal,
+			daftarPeserta[i].bidangMinat)
+		i = i + 1
+	}
+}
+
+func loadCSV() {
+	file, err := os.Open(namaFile)
+	if err != nil {
+		// File belum ada, mulai kosong
+		return
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	barisPertama := true
+	nPeserta = 0
+
+	for scanner.Scan() {
+		baris := scanner.Text()
+		if barisPertama {
+			barisPertama = false
+			continue // skip header
+		}
+		if baris == "" {
+			continue
+		}
+
+		// Pisah berdasarkan koma
+		kolom := strings.Split(baris, ",")
+		if len(kolom) < 4 {
+			continue
+		}
+
+		daftarPeserta[nPeserta] = Peserta{
+			id:          kolom[0],
+			nama:        kolom[1],
+			tanggal:     kolom[2],
+			bidangMinat: kolom[3],
+		}
+		updateJumlahBidang(kolom[3], 1)
+		nPeserta = nPeserta + 1
+	}
+
+	if nPeserta > 0 {
+		fmt.Printf("Data berhasil dimuat: %d peserta ditemukan.\n", nPeserta)
+	}
 }
 
 // ============================================================
@@ -133,7 +204,9 @@ func tampilkanKursusByBidang(bidang string) {
 // ============================================================
 
 func generateID() string {
-	return fmt.Sprintf("P%03d", nPeserta+1)
+	// Cari ID terbesar lalu tambah 1
+	maxNum := nPeserta
+	return fmt.Sprintf("P%03d", maxNum+1)
 }
 
 // ============================================================
@@ -172,6 +245,9 @@ func tambahPeserta() {
 	daftarPeserta[nPeserta] = Peserta{id, nama, tanggal, bidang}
 	nPeserta = nPeserta + 1
 	updateJumlahBidang(bidang, 1)
+
+	// Auto simpan ke CSV
+	simpanCSV()
 
 	fmt.Println()
 	fmt.Printf("Peserta berhasil didaftarkan!\n")
@@ -218,8 +294,8 @@ func ubahPeserta() {
 	fmt.Printf("  Bidang   : %s\n", daftarPeserta[idx].bidangMinat)
 	fmt.Println()
 
-	namaBaru := bacaInput("Nama Baru (kosongkan jika tidak diubah)   : ")
-	tanggalBaru := bacaInput("Tanggal Baru (kosongkan jika tidak diubah): ")
+	namaBaru := bacaInput("Nama Baru (Enter jika tidak diubah)   : ")
+	tanggalBaru := bacaInput("Tanggal Baru (Enter jika tidak diubah): ")
 
 	fmt.Println()
 	tampilkanBidang()
@@ -240,7 +316,9 @@ func ubahPeserta() {
 		updateJumlahBidang(daftarPeserta[idx].bidangMinat, 1)
 	}
 
-	fmt.Println("Data peserta berhasil diubah!")
+	// Auto simpan ke CSV
+	simpanCSV()
+	fmt.Println("Data peserta berhasil diubah dan disimpan!")
 }
 
 // ============================================================
@@ -278,14 +356,16 @@ func hapusPeserta() {
 
 	if strings.ToLower(konfirmasi) == "y" {
 		updateJumlahBidang(daftarPeserta[idx].bidangMinat, -1)
-		// Geser elemen ke kiri
 		j := idx
 		for j < nPeserta-1 {
 			daftarPeserta[j] = daftarPeserta[j+1]
 			j = j + 1
 		}
 		nPeserta = nPeserta - 1
-		fmt.Println("Peserta berhasil dihapus!")
+
+		// Auto simpan ke CSV
+		simpanCSV()
+		fmt.Println("Peserta berhasil dihapus dan data disimpan!")
 	} else {
 		fmt.Println("Penghapusan dibatalkan.")
 	}
@@ -361,7 +441,7 @@ func sequentialSearchBidang(bidang string) {
 }
 
 // ============================================================
-// FITUR C: PENCARIAN - BINARY SEARCH (butuh data terurut by nama)
+// FITUR C: PENCARIAN - BINARY SEARCH
 // ============================================================
 
 func insertionSortByNama(arr *DaftarPeserta, n int) {
@@ -381,7 +461,6 @@ func insertionSortByNama(arr *DaftarPeserta, n int) {
 }
 
 func binarySearchNama(arr DaftarPeserta, n int, nama string) {
-	// Buat salinan array lalu urutkan
 	var arrSalin DaftarPeserta
 	i := 0
 	for i < n {
@@ -454,7 +533,7 @@ func menuCari() {
 }
 
 // ============================================================
-// FITUR D: PENGURUTAN - SELECTION SORT BY ID
+// FITUR D: PENGURUTAN
 // ============================================================
 
 func selectionSortByID(arr *DaftarPeserta, n int) {
@@ -476,10 +555,6 @@ func selectionSortByID(arr *DaftarPeserta, n int) {
 		i = i + 1
 	}
 }
-
-// ============================================================
-// FITUR D: PENGURUTAN - INSERTION SORT BY NAMA
-// ============================================================
 
 func insertionSortNamaAsc(arr *DaftarPeserta, n int) {
 	var temp Peserta
@@ -515,11 +590,13 @@ func menuUrut() {
 	switch pilihan {
 	case "1":
 		selectionSortByID(&daftarPeserta, nPeserta)
+		simpanCSV()
 		fmt.Println("\nData berhasil diurutkan berdasarkan ID (Selection Sort)!")
 		fmt.Println()
 		tampilkanSemuaPeserta()
 	case "2":
 		insertionSortNamaAsc(&daftarPeserta, nPeserta)
+		simpanCSV()
 		fmt.Println("\nData berhasil diurutkan berdasarkan Nama A-Z (Insertion Sort)!")
 		fmt.Println()
 		tampilkanSemuaPeserta()
@@ -542,7 +619,6 @@ func tampilkanStatistik() {
 
 	i := 0
 	for i < nBidang {
-		// Bar chart sederhana
 		bar := ""
 		j := 0
 		for j < daftarBidang[i].jumlah {
@@ -599,7 +675,7 @@ func menuManajemenPeserta() {
 }
 
 // ============================================================
-// MAIN MENU
+// MAIN
 // ============================================================
 
 func tampilkanHeader() {
@@ -612,6 +688,9 @@ func tampilkanHeader() {
 func main() {
 	inisialisasiBidang()
 	inisialisasiKursus()
+
+	// Load data dari CSV saat program dibuka
+	loadCSV()
 
 	for {
 		fmt.Println()
