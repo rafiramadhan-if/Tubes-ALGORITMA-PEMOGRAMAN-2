@@ -20,7 +20,7 @@ minat. Pengguna aplikasi adalah admin pendaftaran atau koordinator kursus.
 <br><br>
 ## 🤔PENJELASAN MENU UTAMA 
 1. Tambah Peserta: Menambahkan data peserta kursus baru ke dalam sistem (misalnya menginput Nama).
-2.Tampilkan Data: Menampilkan daftar lengkap seluruh peserta kursus yang telah terdaftar ke layar terminal.
+2. Tampilkan Data: Menampilkan daftar lengkap seluruh peserta kursus yang telah terdaftar ke layar terminal.
 3. Ubah Peserta: Memperbarui informasi data peserta yang sudah ada di dalam sistem berdasarkan pencarian data tertentu.
 4. Hapus Peserta: Menghapus data peserta dari daftar kursus di dalam sistem.
 5. Sequential Search Nama: Mencari data spesifik berdasarkan Nama peserta dengan mengeceknya satu per satu dari awal hingga akhir data (pencarian linear).
